@@ -1,0 +1,27 @@
+name: CI Pipeline – Logic Apps
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Validate Logic App JSON files
+        run: |
+          echo "Validating Logic App definitions"
+          jq . logicapps/create/workflow.json
+          jq . logicapps/get/workflow.json
+          jq . logicapps/delete/workflow.json
+
+      - name: Simulate deployment
+        run: |
+          echo "Simulating deployment of Logic Apps (tenant restrictions prevent Service Principal creation)"
+          echo "logic-edushare-media-create"
+          echo "logic-edushare-media-get"
+          echo "logic-edushare-media-delete"

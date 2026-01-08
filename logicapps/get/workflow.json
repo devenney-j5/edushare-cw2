@@ -1,0 +1,69 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "contentVersion": "1.0.0.0",
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "method": "GET"
+                }
+            }
+        },
+        "actions": {
+            "Query_documents_V5": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['documentdb']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/v5/cosmosdb/@{encodeURIComponent('AccountNameFromSettings')}/dbs/@{encodeURIComponent('EduShareDB')}/colls/@{encodeURIComponent('MediaMetadata')}/query",
+                    "queries": {
+                        "queryText": "SELECT * FROM c WHERE c.courseId = 'COM682'\n"
+                    }
+                },
+                "runAfter": {}
+            },
+            "Response": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                    "statusCode": 200,
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "body": "@body('Query_documents_V5')?['value']"
+                },
+                "runAfter": {
+                    "Query_documents_V5": [
+                        "Succeeded"
+                    ]
+                }
+            }
+        },
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "type": "Object",
+            "value": {
+                "documentdb": {
+                    "id": "/subscriptions/e9955cc1-f946-4c6e-b995-bab823f274b1/providers/Microsoft.Web/locations/uksouth/managedApis/documentdb",
+                    "connectionId": "/subscriptions/e9955cc1-f946-4c6e-b995-bab823f274b1/resourceGroups/rg-edushare-cw2/providers/Microsoft.Web/connections/documentdb",
+                    "connectionName": "documentdb",
+                    "connectionProperties": {}
+                }
+            }
+        }
+    }
+}

@@ -8,3 +8,5 @@ including Azure Blob Storage, Azure Cosmos DB, Azure Functions, Logic Apps,
 Application Insights, and CI/CD using GitHub.
 
 The implementation is based on the system design produced in Coursework 1.
+
+CI/CD pipeline for Logic Apps added.
